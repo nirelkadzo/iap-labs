@@ -9,6 +9,11 @@ if(isset($_POST['btn-save'])){
 	$city=$_POST['city_name'];
 
 	$user= new User($first_name, $last_name, $city);
+	if($user->validateForm()){
+		$user->createFormErrorSessions();
+		header("Refresh :o");
+		die();
+	}
 	$res=$user->save();
 
 	if($res){
@@ -23,10 +28,25 @@ if(isset($_POST['btn-save'])){
 <html>
 	<head>
 		<title>Lab1</title>
+		<script type="text/javascript" src="validate.js"></script>
+		<link rel="stylesheet" type="text/css" href="validate.css">
 	</head>
 	<body>
 		<form method="post">
 			<table align="center">
+				<tr>
+				<td>
+					<div id="form-errors">
+						<?php
+							session_start();
+							if(!empty($_SESSION['form-errors]'])){
+								echo " ". $_SESSION['form-errors'];
+								unset($_SESSION['form_errors']);
+							}
+						?>
+					</div>
+				</td>
+				</tr>
 				<tr>
 					<td><input type="text" name="first_name" required placeholder="First Name"/></td>
 				</tr>
@@ -37,10 +57,11 @@ if(isset($_POST['btn-save'])){
 					<td><input type="text" name="city_name" required placeholder="City"/></td>
 				</tr>
 				<tr>
-					<td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
+					<td><button type="submit" name="btn-save" id="btn_save" onsubmit="return validateForm()" action=<?=$_SERVER['PHP_SELF']?>><strong>SAVE</strong></button></td>
 				</tr>
 			</table>
 		</form>
+
 
 	</body>
 </html>
