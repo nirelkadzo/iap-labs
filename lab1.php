@@ -1,27 +1,30 @@
 <?php
-/*include_once 'DBConnector.php';*/
+include_once 'DBConnector.php';
 include_once 'user.php';
-$conn= new DBConnector;
+$db= new DBConnector;
 
 if(isset($_POST['btn-save'])){
 	$first_name=$_POST['first_name'];
 	$last_name=$_POST['last_name'];
 	$city=$_POST['city_name'];
+	$username=$_POST['username'];
+	$password=$_POST['password'];
+	
 
-	$user= new User($first_name, $last_name, $city);
+	$user= new User($first_name, $last_name, $city,$username,$password);
 	if($user->validateForm()){
 		$user->createFormErrorSessions();
 		header("Refresh :o");
 		die();
 	}
 	$res=$user->save();
-
+	//$result=$user->readAll();
 	if($res){
 		echo "Save operation was succesful";
 	}else{
 		echo "An error occured!";
 	}
-	$user->readAll();
+	$result=$user->readAll();
 }
 ?>
 
@@ -32,7 +35,7 @@ if(isset($_POST['btn-save'])){
 		<link rel="stylesheet" type="text/css" href="validate.css">
 	</head>
 	<body>
-		<form method="post">
+		<form method="post" name="user_details" id="user_details" onsubmit="return validateForm()" action=<?=$_SERVER['PHP_SELF']?>>
 			<table align="center">
 				<tr>
 				<td>
@@ -57,7 +60,16 @@ if(isset($_POST['btn-save'])){
 					<td><input type="text" name="city_name" required placeholder="City"/></td>
 				</tr>
 				<tr>
-					<td><button type="submit" name="btn-save" id="btn_save" onsubmit="return validateForm()" action=<?=$_SERVER['PHP_SELF']?>><strong>SAVE</strong></button></td>
+					<td><input type="text" name="username" required placeholder="Username"/></td>
+				</tr>
+				<tr>
+					<td><input type="password" name="password" required placeholder="Password"/></td>
+				</tr>
+				<tr>
+					<td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
+				</tr>
+				<tr>
+					<td><a href="login.php">Login</a></td>
 				</tr>
 			</table>
 		</form>
