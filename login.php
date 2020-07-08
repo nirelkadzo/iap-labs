@@ -1,18 +1,22 @@
 <?php
-include_once 'DBConnector.php';
-include_once 'user.php';
+include 'DBConnector.php';
+include 'user.php';
 
 $db=new DBConnector;
 if(isset($_POST['btn-login'])){
+    $conn= $db->openDatabase();
+
     $username=$_POST['username'];
     $password=$_POST['password'];
 //confirm the name of users
-    $instance=User::create();
+   // $instance=User::create();
+   //other way
+   $instance = new User("","","",$username,$password,"","");
     $instance->setPassword($password);
     $instance->setUsername($username);
 
-    if($instance->isPasswordCorrect()){
-        $instance->login();
+    if($instance->isPasswordCorrect($conn)){
+        $instance->login($conn);
         $db->closeDatabase();
         $instance->createUserSession();
 
@@ -23,15 +27,17 @@ if(isset($_POST['btn-login'])){
 }
 
 ?>
+<!DOCTYPE html>
 <html>
     <head>
-        <title>Title goes here</title>
+        <title>Login</title>
         <script type="text/javascript" src="validate.js"></script>
         <link rel="stylesheet" type="text/css" href="validate.css">
 
     </head>
     <body>
-        <form method="post" name="login" id="login" action="<?=$_SERVER['PHP_SELF']?>">
+    <!--action on the php taken out: action="?=$_SERVER['PHP_SELF']?>" -->
+        <form method="post" name="login" id="login" >
             <table align="center">
                 <tr>
                     <td><input type="text" name="username" placeholder="Username" required></td>
